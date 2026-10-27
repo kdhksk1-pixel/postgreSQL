@@ -364,3 +364,89 @@ where dept_code not in ('D6', 'D8', 'D5');
 select *
 from employee
 where job_code ='J7' or job_code ='J2' and salary  >= 2000000;
+
+-------------------------- 실습문제------------------------
+-- 1. 사수가 없고 부서배치도 받지 않은 사원들의 사원명, 사수사번, 부서코드 조회
+select emp_name, emp_id, dept_code
+from employee
+where dept_code is null and manager_id is null;
+-- 2. 연봉(보너스포함X)이 3000만원 이상이고/ 보너스를 받지 않은 사원들의 
+--		사번, 사원명, 연봉, 보너스 조회
+select emp_id, emp_name, salary, bonus
+from employee
+where (salary * 12) >= 30000000 and bonus is null;
+-- 3. 입사일이 1995-01-01 이상이고 부서배치를 받은 사원들의 
+--		사번, 사원명, 입사일, 부서코드 조회
+select emp_id, emp_name, hire_date, dept_code
+from employee
+where hire_date >= '1995-01-01' and dept_code is not null;
+-- 4. 급여가 200만원 이상 500만원 이하고 입사일이 2001-01-01 이상이고 
+--		보너스를 받지 않는 사원들의 사번, 사원명, 급여, 입사일, 보너스 조회
+select emp_id, emp_name, salary, hire_date, bonus
+from employee
+where salary between 2000000 and 5000000 and hire_date >= '2001-01-01' and bonus is null;
+-- 5. 보너스포함 연봉이 NULL이 아니고 이름에 '하'가 포함되어 있는 사원들의 
+--		사번, 사원명, 급여, 보너스포함연봉 조회 (별칭부여)
+select emp_id, emp_name, salary, (salary + (salary*bonus))*12 as "보너스 포함"
+from employee
+where emp_name like '%하%' and (salary +(salary +bonus))*12 is not null;
+
+------------------------------- 종합 문제 ----------------------------------
+-- 1. JOB테이블에서 모든 정보 조회
+select *
+from job;
+-- 2. JOB 테이블에서 직급 이름 조회
+select job_name
+from job;
+-- 3. DEPARTMENT 테이블에서 모든 정보 조회
+select *
+from department;
+-- 4. EMPLOYEE테이블의 직원명, 이메일, 전화번호, 고용일 조회
+select emp_name, email, phone, hire_date
+from employee;
+-- 5. EMPLOYEE테이블의 고용일, 사원 이름, 월급 조회
+select hire_date, emp_name, salary
+from employee;
+-- 6. EMPLOYEE테이블에서 이름, 연봉, 총수령액(보너스포함), 실수령액(총수령액 - (연봉*세금 3%)) 조회
+select 
+    emp_name as "이름", 
+    salary * 12 as "연봉", 
+    (salary + (salary * coalesce(bonus, 0))) * 12 as "총수령액", 
+    ((salary + (salary * coalesce(bonus, 0))) * 12) - ((salary * 12) * 0.03) as "실수령액"
+from employee;
+-- 7. EMPLOYEE테이블에서 JOB_CODE가 J1인 사원의 이름, 월급, 고용일, 연락처 조회
+select emp_name, salary, hire_date, phone
+from employee
+where job_code ='J1';
+-- 8. EMPLOYEE테이블에서 실수령액이 5천만원 이상인 사원의 이름, 월급, 실수령액, 고용일 조회
+SELECT 
+    emp_name AS "이름", 
+    salary AS "월급", 
+    ((salary + (salary * COALESCE(bonus, 0))) * 12) - ((salary * 12) * 0.03) AS "실수령액", 
+    hire_date AS "고용일"
+FROM employee
+WHERE (((salary + (salary * COALESCE(bonus, 0))) * 12) - ((salary * 12) * 0.03)) >= 50000000;
+-- 9. EMPLOYEE테이블에 월급이 4000000이상이고 JOB_CODE가 J2인 사원의 전체 내용 조회
+select *
+from employee
+where salary >= 4000000 and job_code ='J2';
+-- 10. EMPLOYEE테이블에 DEPT_CODE가 D9이거나 D5인 사원 중 고용일이 02년 1월 1일보다 빠른 사원의 이름, 부서코드, 고용일 조회
+select emp_name, dept_code, hire_date
+from employee
+where dept_code in ('D9', 'D5') and hire_date < '2002-01-01';
+-- 11. EMPLOYEE테이블에 고용일이 1990-01-01 ~ 2001-01-01인 사원의 전체 내용을 조회
+select *
+from employee
+where hire_date between '1990-01-01' and '2001-01-01';
+-- 12. EMPLOYEE테이블에서 이름 끝이 '연'으로 끝나는 사원의 이름 조회
+select emp_name
+from employee
+where emp_name like '%연';
+-- 13. EMPLOYEE테이블에서 전화번호 처음 3자리가 010이 아닌 사원의 이름, 전화번호를 조회
+select emp_name, phone
+from employee
+where phone not like '010%';
+-- 14. EMPLOYEE테이블에서 메일주소 '_'의 앞이 4자이면서 DEPT_CODE가 D9 또는 D6이고 고용일이 1990-01-01 ~ 2000-12-01이고, 급여가 270만 이상인 사원의 전체를 조회
+select *
+from employee
+where email like '____\_%' escape '\' and dept_code in ('D9', 'D6') and hire_date between '1990-01-01' and '2000-12-01' and salary >=270000;
