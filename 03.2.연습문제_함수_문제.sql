@@ -61,7 +61,7 @@ SELECT SUM((salary + (salary * COALESCE(bonus, 0))) * 12) AS 연봉합계
 FROM employee
 WHERE dept_code = 'D5';
 -- 10. EMPLOYEE테이블에서 직원들의 입사일로부터 년도만 가지고 각 년도별 입사 인원수 조회
---      전체 직원 수, 2001년, 2002년, 2003년, 2004년
+--      전체 직원 수, 2001년, 2013년, 2023년, 2024년
 SELECT COUNT(*) AS "전체 직원 수",
        COUNT(CASE WHEN EXTRACT(YEAR FROM hire_date) = 2001 THEN 1 END) AS "2001년",
        COUNT(CASE WHEN EXTRACT(YEAR FROM hire_date) = 2002 THEN 1 END) AS "2002년",
