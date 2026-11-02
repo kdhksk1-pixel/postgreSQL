@@ -528,3 +528,4 @@ alter table employee add foreign key (dept_code) references department;
 alter table employee_copy alter column ent_yn set default 'N';
 
 -- employee_copy테이블에 emp_id, emp_no의 컬럼에 comment 넣기
+--=============================================================================================================
