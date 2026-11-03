@@ -60,7 +60,7 @@ comment on column tb_publisher.phone is '출판사전화번호';
 insert into tb_publisher values
 (1, '한빛미디어', '02-111-1111'),
 (2, '이지스퍼블리싱', '02-222-2222'),
-(3, '위키북스', '02-333-3333');
+(3, '위키북스', '02-333-3333')
 --===================================================================================================
 create table tb_book(
 	bk_no numeric constraint book_pk primary key,
@@ -68,7 +68,7 @@ create table tb_book(
 	bk_author varchar(20) constraint book_nn_author not null,
 	bk_price numeric,
 	bk_pub_no numeric constraint book_fk references tb_publisher (pub_no) on delete cascade
-);
+)
 
 -- 컬럼 주석 달기
 comment on column tb_book.bk_no is '도서번호';
@@ -83,7 +83,7 @@ insert into tb_book values
 (2, 'Do it! 데이터 분석', '김도현', 20000, 2),
 (3, '스프링 부트 3', '이동욱', 30000, 3),
 (4, '자바의 정석', '남궁성', 20000, 1),
-(5, '점프 투 파이썬', '박응용', 18000, 2);
+(5, '점프 투 파이썬', '박응용', 18000, 2)
 --===================================================================================================
 create table tb_member(
 	member_no numeric constraint member_pk primary key,
@@ -95,7 +95,7 @@ create table tb_member(
 	phone varchar(13),
 	status char(1) default 'N' constraint member_ck_sta check(status in('Y', 'N')),
 	enroll_date date default current_date constraint member_nn_en not null
-);
+)
 
 -- 컬럼 주석 달기
 comment on column tb_member.member_no is '회원번호';
@@ -121,7 +121,7 @@ create table tb_rent(
 	rent_mem_no numeric constraint rent_fk_mem references tb_member(member_no) on delete set null,
 	rent_book_no numeric constraint rent_fk_book  references tb_book(bk_no) on delete set null,
 	rent_date date default current_date
-);
+)
 
 -- 컬럼 주석 달기
 comment on column tb_rent.rent_no is '대여번호';
@@ -133,4 +133,4 @@ comment on column tb_rent.rent_date is '대여일';
 insert into tb_rent(rent_no, rent_mem_no, rent_book_no) values
 (1, 1, 1),
 (2, 2, 3),
-(3, 4, 5);
+(3, 4, 5)
