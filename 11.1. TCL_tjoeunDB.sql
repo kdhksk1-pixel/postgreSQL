@@ -61,7 +61,8 @@ commit;
 ------------------------------------------------------------------------------------
 BEGIN;
 
-delete from emp_dept where emp_id ='214';
+--delete from emp_dept where emp_id ='217';
+insert into emp_dept values('200', '이미소', 'D2', '2004-01-20');
 
 select * from emp_dept;
 
@@ -71,6 +72,22 @@ insert into emp_dept values('300', '이미소', 'D2', '2004-01-20');
 
 select * from emp_dept;
 
+
+rollback to sp;
 rollback transaction to sp;
---rollback to sp;
+
 select * from emp_dept;
+
+commit;
+
+-----------------------------------------------------------------------------------------------
+--
+begin;
+
+
+delete from emp_01 where emp_id='800';
+select * from emp_01;
+savepoint sp1;
+
+insert into emp_01(emp_id) values('900');
+rollback to sp1;
