@@ -1,4 +1,3 @@
-
 /*
 문제 1.
 다음 조건에 맞는 로그인 Role을 생성
@@ -6,13 +5,16 @@
 - 비밀번호: test1234
 - 로그인 가능하도록 설정
 */
+create user practice_dcl_user with password 'test1234';
 
 -- 문제 2. practice_dcl_user에게 tjoeun 데이터베이스에 접속할 수 있는 CONNECT 권한을 부여
+grant connect on database tjoeun to practice_dcl_user;
 
 -- 문제 3. practice_dcl_user에게 public 스키마를 사용할 수 있는 USAGE 권한을 부여
+grant usage on schema public to practice_dcl_user;
 
 -- 문제 4. practice_dcl_user에게 EMPLOYEE 테이블을 조회할 수 있는 SELECT 권한만 부여하세요.
-
+grant select on table employee to practice_dcl_user;
 /*
 문제 5.
 다음 작업을 순서대로 수행
@@ -20,6 +22,17 @@
 2) 부여한 권한 중 INSERT 권한만 회수
 3) practice_dcl_user가 EMPLOYEE 테이블에 보유한 권한을 확인하는 SELECT문을 작성
 */
+--5.1)
+grant insert, update, delete on table employee to practice_dcl_user;
+
+--5.2)
+revoke insert on table employee from practice_dcl_user;
+
+--5.3)
+select privilege_type
+	from information_schema.role_table_grants
+	where grantee = 'practice_dcl_user'
+		and table_name='employee';
 
 
 -- ===========================================================================
@@ -28,7 +41,6 @@ CREATE TEMP TABLE practice_emp AS
 SELECT EMP_ID, EMP_NAME, DEPT_CODE, SALARY
 FROM EMPLOYEE;
 -- ===========================================================================
-
 /*
 문제 6. 다음 작업을 수행하기
 1) 트랜잭션을 시작
@@ -37,7 +49,11 @@ FROM EMPLOYEE;
 4) ROLLBACK으로 변경사항을 취소
 5) 다시 조회하여 원래 급여로 돌아왔는지 확인
 */
-
+begin;
+update practice_emp set salary = salary+1000000 where emp_id='200';
+select * from practice_emp where emp_id='200';
+rollback;
+select * from practice_emp where emp_id = '200';
 
 /*
 문제 7. 다음 작업을 순서대로 수행하기.
