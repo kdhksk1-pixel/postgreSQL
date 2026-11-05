@@ -128,3 +128,31 @@ begin
 	raise notice '급여:%', SAL;
 end;
 $$;
+---------------------- 문제
+/*
+	레퍼런스타입변수로 EID, ENAME, JCODE, SAL, DTITLE을 선언하고
+	각 자료형에 EMP_ID, EMP_NAME, JOB_CODE, SALARY, DEPT_TITLE(DEPARTMENT)
+	
+	사용자가 입력한 사번의 사번, 사원명, 직급코드, 급여, 부서명을 출력
+ */
+do $$
+declare
+	EID    employee.emp_id%type;
+	ENAME  employee.emp_name%type;
+	JCODE  employee.job_code%type;
+	SAL    employee.salary%type;
+	DTITLE department.dept_title%type;
+begin
+	select E.emp_id, E.emp_name, E.job_code, E.salary, D.dept_title
+	into EID, ENAME, JCODE, SAL, DTITLE
+	from employee E
+	left join department D on E.dept_code = D.dept_id
+	where E.emp_id = ${사번}; 
+	
+	raise notice '사번: %', EID;
+	raise notice '사원명: %', ENAME;
+	raise notice '직급코드: %', JCODE;
+	raise notice '급여: %', SAL;
+	raise notice '부서명: %', DTITLE;
+end;
+$$;
