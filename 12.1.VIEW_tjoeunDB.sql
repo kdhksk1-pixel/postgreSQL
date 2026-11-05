@@ -180,3 +180,22 @@ insert into vm_job3 values ('인턴');
 
 begin;
 -- update(성공)
+update vm_job3
+	set job_name = '인턴'
+	where job_name = '사원';
+
+-- delete(외래키가 걸려있지 않으면 가능)
+delete from vm_job3
+	where job_name = '대리';
+
+select * from vm_job3;
+select * from job;
+
+rollback;
+
+-- 3) 산술식 또는 함수식으로 정의 되어있는 경우
+drop view vm_emp_sal;
+
+create view vm_emp_sal
+as select emp_id, emp_name, emp_no, job_code, salary, salary*12 연봉
+	from employee;
