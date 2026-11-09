@@ -28,3 +28,35 @@
 -- 준비
 DROP TABLE IF EXISTS PRACTICE_SALARY_LOG;
 DROP TABLE IF EXISTS PRACTICE_EMPLOYEE;
+
+create table practice_employee as
+select emp_id, emp_name, salary
+from employee;
+
+create table practice_salary_log(
+	emp_id varchar(3),
+	emp_name varchar(20),
+	old_salary numeric,
+	new_salary numeric,
+	change_date timestamp
+);
+
+create function FN_SALARY_LOG()
+returns trigger as $$
+begin
+	if old.salary is distinct from new.salary then
+		insert into practice_salary_log
+		values (old.emp_id, old.emp_name, old.salary, new.salary, current_timestamp);
+	end if;
+	return new;
+end;
+$$ language PLPGSQL;
+
+create trigger TRG_PRACTICE_SALARY
+after update on practice_employee
+for each row
+execute function FN_SALARY_LOG();
+
+update practice_employee
+set salary = 8500000
+where emp_id = '200';
