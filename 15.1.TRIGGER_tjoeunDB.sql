@@ -184,3 +184,54 @@ values(nextval('seq_tcode'), 230, current_date, 5, 1500000);
 
 insert into tb_prostock
 values(nextval('seq_tcode'), 235, current_date, 100, 2500000);
+
+-- 입고 테이블(tb_prosale)에 입고 되었을 때 트리거 정의(tb_product에 update)
+-- 함수 정의
+create or replace function FN_TRG_SALE_AFTER()
+returns trigger as $$
+begin
+	update TB_PRODUCT
+		set STOCK_QUANT = STOCK_QUANT - new.sale_count
+	where PCODE = new.PCODE;
+	return new;
+end;
+$$ language PLPGSQL;
+
+-- 트리거 정의
+create trigger TRG_SALE
+after insert on TB_PROSALE
+for each row
+execute function FN_TRG_SALE_AFTER();
+
+insert into tb_prosale
+values (nextval('seq_scode'), 200, current_date, 5, 2500000);
+
+-- 출고 시 재고 수량이 부족할 경우 출고가 안되게
+-- EXCEPTION
+create function FN_TRG_SALE_BEFORE()
+returns trigger as $$
+declare
+	scount numeric;     -- 기존의 재고 수량 넣을 변수
+begin
+	select stock_quant
+	into strict scount
+	from TB_PRODUCT
+	where pcode = new.pcode;
+
+	if (scount >= new.sale_count) then
+		update TB_PRODUCT
+			set stock_quant = stock_quant - new.sale_count
+		where pcode = new.pcode
+		return new;
+	else
+		raise exception '재고수량이 부족합니다';
+	end if;
+end;
+$$ language PLPGSQL;
+
+create trigger TRG_SALE_EX
+before insert on TB_PROSALE
+for each row
+execute function FN_TRG_SALE_BEFORE();
+
+insert into tb_prosale values(nextval('seq_scode'), 200, current_date, 10, 2500000);
